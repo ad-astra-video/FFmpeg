@@ -2657,7 +2657,7 @@ static int nvenc_send_frame(AVCodecContext *avctx, const AVFrame *frame)
     if (frame && frame->buf[0]) {
         if (ctx->encoder_flushing) {
             ctx->encoder_flushing = 0;
-            av_fifo_reset(ctx->timestamp_list);
+            av_fifo_reset2(ctx->timestamp_list);
         }
 
         in_surf = get_free_frame(ctx);
@@ -2783,7 +2783,7 @@ int ff_nvenc_receive_packet(AVCodecContext *avctx, AVPacket *pkt)
         av_frame_unref(frame);
 
     if (output_ready(avctx, ctx->encoder_flushing)) {
-        av_fifo_generic_read(ctx->output_surface_ready_queue, &tmp_out_surf, sizeof(tmp_out_surf), NULL);
+        av_fifo_read(ctx->output_surface_ready_queue, &tmp_out_surf, sizeof(tmp_out_surf));
 
         res = nvenc_push_context(avctx);
         if (res < 0)
